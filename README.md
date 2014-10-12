@@ -1,7 +1,7 @@
 PCANet
 ======
 
-rewrite the matlab code of pcanet into c++
+rewrite the matlab code of pcanet into c++ and using openmp to reduce the run time.
 
 
 PCANet: A Simple Deep Learning Baseline for Image Classification?
