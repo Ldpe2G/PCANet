@@ -21,7 +21,7 @@ cv::Mat im2colstep(cv::Mat& InImg, vector<int>& blockSize, vector<int>& stepSize
 			for(int m=0; m<blockSize[ROW_DIM]; m++){
 				
 				p_InImg = InImg.ptr<double>(i + m);
-				
+
 				for(int l=0; l<blockSize[COL_DIM]; l++){
 					p_OutImg[blockSize[ROW_DIM] * l + m] = p_InImg[j + l];
 					//p_OutImg[blockSize[COL_DIM] * l + m] = p_InImg[j + l];
@@ -96,7 +96,7 @@ cv::Mat PCA_FilterBank(vector<cv::Mat>& InImg, int PatchSize, int NumFilters){
 	cv::Mat temp2;
 	cv::Mat temp3;
 	
-	int coreNum = omp_get_num_procs();//获得处理器个数
+	int coreNum = omp_get_num_procs();//»ñµÃŽŠÀíÆ÷žöÊý
 	int cols = 0;
 # pragma omp parallel for default(none) num_threads(coreNum) private(temp, temp2, temp3, mean) shared(cols, Rx, InImg_Size, InImg, randIdx, blockSize, stepSize)
 	for(int j=0; j<InImg_Size; j++){
@@ -153,7 +153,7 @@ PCA_Out_Result* PCA_output(vector<cv::Mat>& InImg, vector<int>& InImgIdx, int Pa
 	cv::Mat temp2;
 	cv::Mat temp3;
 
-	int coreNum = omp_get_num_procs();//获得处理器个数
+	int coreNum = omp_get_num_procs();//»ñµÃŽŠÀíÆ÷žöÊý
 	coreNum = coreNum > threadnum ? threadnum : coreNum;
 	cv::Scalar s = cv::Scalar(0);
 
@@ -241,7 +241,7 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 		vector<cv::Mat> features;
 		Hashing_Result* hashing_r;
 
-		int coreNum = omp_get_num_procs();//获得处理器个数
+		int coreNum = omp_get_num_procs();//»ñµÃŽŠÀíÆ÷žöÊý
 		e1 = cv::getTickCount();
 # pragma omp parallel for default(none) num_threads(coreNum) private(temp, hashing_r) shared(features, out_result, PcaNet, first, last, outIdx_length, img_length, train_result, end)
 		for(int i=0; i<img_length; i++){
@@ -264,6 +264,8 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 			features.push_back(hashing_r->Features);
 			train_result->feature_idx.push_back(out_result->OutImgIdx[i]);
 }
+			delete hashing_r;
+			delete temp;
 			subIdx.clear();
 			vector<int>().swap(subIdx);
 		}
@@ -271,8 +273,9 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 		time = (e2 - e1)/ cv::getTickFrequency();
 		cout <<"\n hasing time: "<<time<<endl;
 		
-		out_result->OutImg.clear();
-		vector<cv::Mat>().swap(out_result->OutImg);
+		//out_result->OutImg.clear();
+		//vector<cv::Mat>().swap(out_result->OutImg);
+		delete out_result;
 
 		int size = features.size();
 		if(size > 0){
@@ -281,10 +284,13 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 				vconcat(train_result->Features, features[i], train_result->Features);
 			}
 		}
+
+		features.clear();
+		vector<cv::Mat>().swap(features);
 	}
 	
-	if(temp != NULL)
-		delete temp;
+	//if(temp != NULL)
+	//	delete temp;
 	
 	return train_result;
 }
@@ -333,7 +339,7 @@ Hashing_Result* HashingHist(PCANet* PcaNet, vector<int>& ImgIdx, vector<cv::Mat>
 		
 		temp = im2col_general(T, PcaNet->HistBlockSize, Ro_BlockSize); 
 		temp = Hist(temp, (int)(pow(2.0, NumFilters)) - 1);
-		
+
 		temp = bsxfun_times(temp, NumFilters);
 		if(i == 0) BHist = temp;
 		else hconcat(BHist, temp, BHist);
