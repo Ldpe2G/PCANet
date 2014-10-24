@@ -47,11 +47,14 @@ cv::Mat im2col_general(cv::Mat& InImg, vector<int>& blockSize, vector<int>& step
 		layers.push_back(InImg);
 	
 	cv::Mat AllBlocks = im2colstep(layers[0], blockSize, stepSize);
-	swap(layers[0], layers.back());
-	layers.pop_back();
+
 	int size = layers.size();
-	for(int i=0; i<size; i++){
-		hconcat(AllBlocks, im2colstep(layers[i], blockSize, stepSize), AllBlocks);	
+	if(size > 1){
+		swap(layers[0], layers.back());
+		layers.pop_back();
+		for(int i=1; i<size; i++){
+			hconcat(AllBlocks, im2colstep(layers[i], blockSize, stepSize), AllBlocks);	
+		}
 	}
 	return AllBlocks.t();
 }
@@ -279,10 +282,17 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 
 		int size = features.size();
 		if(size > 0){
+
+			train_result->Features.create(0, features[0].cols, features[0].type());
+			for(int i=0 ;i<size; i++){
+				train_result->Features.push_back(features[i]);
+			}
+
+			/*
 			train_result->Features = features[0];
 			for(int i=1 ;i<size; i++){
 				vconcat(train_result->Features, features[i], train_result->Features);
-			}
+			}*/
 		}
 
 		features.clear();
@@ -320,6 +330,8 @@ Hashing_Result* HashingHist(PCANet* PcaNet, vector<int>& ImgIdx, vector<cv::Mat>
 	double rate = 1 - PcaNet->BlkOverLapRatio;
 	for(int i=0 ;i<PcaNet->HistBlockSize.size(); i++)
 		Ro_BlockSize.push_back(round(PcaNet->HistBlockSize[i] * rate));
+	
+	
 	cv::Mat BHist;
 
 	int ImgIdx_length = ImgIdx.size();
@@ -341,10 +353,11 @@ Hashing_Result* HashingHist(PCANet* PcaNet, vector<int>& ImgIdx, vector<cv::Mat>
 		temp = Hist(temp, (int)(pow(2.0, NumFilters)) - 1);
 
 		temp = bsxfun_times(temp, NumFilters);
+
 		if(i == 0) BHist = temp;
 		else hconcat(BHist, temp, BHist);
 	}
-
+	
 	int rows = BHist.rows;
 	int cols = BHist.cols;
 
