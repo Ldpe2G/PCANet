@@ -36,22 +36,26 @@ cv::Mat im2colstep(cv::Mat& InImg, vector<int>& blockSize, vector<int>& stepSize
 }
 
 cv::Mat im2col_general(cv::Mat& InImg, vector<int>& blockSize, vector<int>& stepSize){
-	assert(blockSize.size() == 2 && stepSize.size() == 2); 
+	assert(blockSize.size() == 2 && stepSize.size() == 2);
+
+	int channels = InImg.channels();
 	
-	int channels = InImg.channels(); 
 	vector<cv::Mat> layers;
-	
 	if(channels > 1)
 		split(InImg, layers);
 	else
 		layers.push_back(InImg);
-		
+	
 	cv::Mat AllBlocks = im2colstep(layers[0], blockSize, stepSize);
-	
-	for (int i = 1; i < layers.size(); ++i){ 
-	 	hconcat(AllBlocks, im2colstep(layers[i], blockSize, stepSize), AllBlocks); 
-	} 
-	
+
+	int size = layers.size();
+	if(size > 1){
+		swap(layers[0], layers.back());
+		layers.pop_back();
+		for(int i=1; i<size; i++){
+			hconcat(AllBlocks, im2colstep(layers[i], blockSize, stepSize), AllBlocks);	
+		}
+	}
 	return AllBlocks.t();
 }
 
