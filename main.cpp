@@ -11,6 +11,7 @@ using namespace cv;
 int main(int argc, char** argv){
 	const int DIR_LENGTH = 256;
 	const int DIR_NUM = 7;
+	//input image size height: 60, width: 48
 	const char *dir[DIR_NUM] = {
 		"F:\\lwf\\AllPicture\\Final\\925New\\notRotate\\train\\children1to5\\1_",
 		"F:\\lwf\\AllPicture\\Final\\925New\\notRotate\\train\\children4to8\\1_",
@@ -74,8 +75,8 @@ int main(int argc, char** argv){
 	vector<int> blockSize;
 	//blockSize.push_back(25);
 	//blockSize.push_back(20);
-	blockSize.push_back(15);
-	blockSize.push_back(12);
+	blockSize.push_back(15);   //  height / 4
+	blockSize.push_back(12);    //  width / 4
 	//blockSize.push_back(14);
 	//blockSize.push_back(9);
 
