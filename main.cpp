@@ -67,7 +67,7 @@ int main(int argc, char** argv){
 			x++;
 		}
 	}
-	*/
+	
 	
 	vector<int> NumFilters;
 	NumFilters.push_back(8);
@@ -212,7 +212,7 @@ int main(int argc, char** argv){
 	for(int i=0; i<DIR_NUM; i++)
 		cout <<"baby"<<i+1<<" precise: "<<corrs[i] / testNum<<endl;
 	cout <<"test images num for each class: "<<testNum<<endl;
-	*/
+	
 	
 	//face detect test
 	/*
