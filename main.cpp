@@ -35,7 +35,7 @@ int main(int argc, char** argv){
 	const int e_t_num = 10;
 	const int E_NUM = e_t_num * 3;
 
-	/*
+	
 	float *labels = new float[NUM + E_NUM]; 
 	int x = 0;
 	for(int i=1; i<train_num + 1; i++){
@@ -87,7 +87,7 @@ int main(int argc, char** argv){
 		blockSize,
 		0.5
 	};
-	/**
+	
 	cout <<"\n ====== PCANet Training ======= \n"<<endl;
 	int64 e1 = cv::getTickCount();
 	PCA_Train_Result* result = PCANet_train(InImgs, &pcaNet, true);
@@ -137,8 +137,8 @@ int main(int argc, char** argv){
 	SVM.save("F:\\lwf\\AllPicture\\Final\\925New\\notRotate\\train\\all_age_svm_60x48_2.xml");
 
 	result->Features.deallocate();
-	*/
-	/*
+	
+	
 	cout <<"\n ====== PCANet Testing ======= \n"<<endl;
 
 	vector<Mat> testImg;
@@ -215,7 +215,7 @@ int main(int argc, char** argv){
 	*/
 	
 	//face detect test
-	
+	/*
 	CvSVM Child_Adult_svm;
 	vector<Mat> Child_Adult_filters;
 
@@ -284,7 +284,7 @@ int main(int argc, char** argv){
 		//	correct ++;
 		//}else{
 			char* path = new char[256];
-			/*
+			
 			//printf("predict: %f, num: %d\n", pred, i+1);
 			if(pred == 1)
 				sprintf(path, "%s%d%s%d.jpg", "F:\\lwf\\AllPicture\\Final\\NewTest48\\Error_40x28\\youth\\children1to4\\", testclass, "_", i+1);
@@ -300,7 +300,7 @@ int main(int argc, char** argv){
 				sprintf(path, "%s%d%s%d.jpg", "F:\\lwf\\AllPicture\\Final\\NewTest48\\Error_40x28\\youth\\middle\\", testclass, "_", i+1);
 			if(pred == 7)
 				sprintf(path, "%s%d%s%d.jpg", "F:\\lwf\\AllPicture\\Final\\NewTest48\\Error_40x28\\youth\\elderly\\", testclass, "_", i+1);
-			*/
+			
 			//cvSaveImage(path, &fakeImg[i]);
 		//}//if(pred > 0)
 		//	correct ++;
@@ -316,6 +316,6 @@ int main(int argc, char** argv){
 	cout <<"Testing time: "<<time<<endl;
 	
 	int t;
-	cin >>t;
+	cin >>t;*/
 	return 0;
 }
