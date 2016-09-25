@@ -12,35 +12,37 @@ import org.opencv.ml.CvSVMParams
 import org.opencv.ml.CvSVM
 import org.opencv.core.TermCriteria
 
-object Main {
+object PCANetScala {
 
+  nu.pattern.OpenCV.loadShared()
 
   def main(args: Array[String]): Unit = {
      
     
-      System.loadLibrary( Core.NATIVE_LIBRARY_NAME)
+      val datasDir = args(0)
+      val modelDir = args(1)
       
       val DIR_NUM = 7
       //input image size height: 60, width: 48
       // 路径根据自己的情况来修改即可
       val train_dir = Array(
-        ".\\datas\\train\\1\\1_",
-        ".\\datas\\train\\2\\2_",
-        ".\\datas\\train\\3\\3_",
-        ".\\datas\\train\\4\\4_",
-        ".\\datas\\train\\5\\5_",
-        ".\\datas\\train\\6\\6_",
-        ".\\datas\\train\\7\\7_"
+        s"$datasDir/train/1/1_",
+        s"$datasDir/train/2/2_",
+        s"$datasDir/train/3/3_",
+        s"$datasDir/train/4/4_",
+        s"$datasDir/train/5/5_",
+        s"$datasDir/train/6/6_",
+        s"$datasDir/train/7/7_"
       )
     
       val test_dir = Array(
-        "datas\\test\\1\\1_",
-        "datas\\test\\2\\2_",
-        "datas\\test\\3\\3_",
-        "datas\\test\\4\\4_",
-        "datas\\test\\5\\5_",
-        "datas\\test\\6\\6_",
-        "datas\\test\\7\\7_"
+        s"$datasDir/test/1/1_",
+        s"$datasDir/test/2/2_",
+        s"$datasDir/test/3/3_",
+        s"$datasDir/test/4/4_",
+        s"$datasDir/test/5/5_",
+        s"$datasDir/test/6/6_",
+        s"$datasDir/test/7/7_"
       )
       
       val NumFilters = List(8, 8)
@@ -104,7 +106,7 @@ object Main {
      var time = (e2 - e1) / Core.getTickFrequency
      println(s" svm training complete, time usage: $time")
       
-     SVM.save(".\\model\\all_age_svm.xml")
+     SVM.save(s"$modelDir/svm.xml")
      
      
      println("\n ====== PCANet Testing ======= ")
@@ -145,9 +147,9 @@ object Main {
        time = (e2 - e1) / Core.getTickFrequency
        println(s" test time usage: $time")
       
-      println(s"all precise: ${correct.toFloat / all}")
+      println(s"Accuracy: ${correct.toFloat / all}")
       for(i <- 0 until DIR_NUM)
-        println(s"person${i+1} precise: ${corrs(i).toFloat / testNum}")
+        println(s"person${i+1} accuracy: ${corrs(i).toFloat / testNum}")
         
       println(s"test images num for each class: $testNum")
   }
