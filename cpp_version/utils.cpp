@@ -99,7 +99,7 @@ cv::Mat PCA_FilterBank(vector<cv::Mat>& InImg, int PatchSize, int NumFilters){
 	cv::Mat temp2;
 	cv::Mat temp3;
 	
-	int coreNum = omp_get_num_procs();//»ñµÃŽŠÀíÆ÷žöÊý
+	int coreNum = omp_get_num_procs();
 	int cols = 0;
 # pragma omp parallel for default(none) num_threads(coreNum) private(temp, temp2, temp3, mean) shared(cols, Rx, InImg_Size, InImg, randIdx, blockSize, stepSize)
 	for(int j=0; j<InImg_Size; j++){
@@ -156,7 +156,7 @@ PCA_Out_Result* PCA_output(vector<cv::Mat>& InImg, vector<int>& InImgIdx, int Pa
 	cv::Mat temp2;
 	cv::Mat temp3;
 
-	int coreNum = omp_get_num_procs();//»ñµÃŽŠÀíÆ÷žöÊý
+	int coreNum = omp_get_num_procs();
 	coreNum = coreNum > threadnum ? threadnum : coreNum;
 	cv::Scalar s = cv::Scalar(0);
 
@@ -185,11 +185,6 @@ PCA_Out_Result* PCA_output(vector<cv::Mat>& InImg, vector<int>& InImgIdx, int Pa
 		}
 }
 	}
-	/*
-	int size = InImgIdx.size();
-	for(int i=0; i<size; i++)
-		for(int j=0; j<NumFilters; j++)
-			result->OutImgIdx.push_back(InImgIdx[i]);*/
 	return result;
 }
 
@@ -218,7 +213,7 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 		eo1 = cv::getTickCount();
 		if(s != PcaNet->NumStages - 1){
 			temp = PCA_output(out_result->OutImg, out_result->OutImgIdx, PcaNet->PatchSize, 
-												PcaNet->NumFilters[s], train_result->Filters[s], omp_get_num_procs());
+					PcaNet->NumFilters[s], train_result->Filters[s], omp_get_num_procs());
 			delete out_result;
 			out_result = temp;
 		}
@@ -244,16 +239,12 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 		vector<cv::Mat> features;
 		Hashing_Result* hashing_r;
 
-		int coreNum = omp_get_num_procs();//»ñµÃŽŠÀíÆ÷žöÊý
+		int coreNum = omp_get_num_procs();
 		e1 = cv::getTickCount();
 # pragma omp parallel for default(none) num_threads(coreNum) private(temp, hashing_r) shared(features, out_result, PcaNet, first, last, outIdx_length, img_length, train_result, end)
 		for(int i=0; i<img_length; i++){
 			vector<cv::Mat> subInImg(first + i * PcaNet->NumFilters[end], last + (i + 1) * PcaNet->NumFilters[end]);
 			vector<int> subIdx;
-			/*for(int j=0; j<outIdx_length; j++){
-				if(out_result->OutImgIdx[j] == i) subIdx.push_back(1);
-				else subIdx.push_back(0);
-			}*/
 			for(int j=0; j< PcaNet->NumFilters[end]; j++)
 				subIdx.push_back(j);
 			
@@ -276,8 +267,6 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 		time = (e2 - e1)/ cv::getTickFrequency();
 		cout <<"\n hasing time: "<<time<<endl;
 		
-		//out_result->OutImg.clear();
-		//vector<cv::Mat>().swap(out_result->OutImg);
 		delete out_result;
 
 		int size = features.size();
@@ -287,21 +276,11 @@ PCA_Train_Result* PCANet_train(vector<cv::Mat>& InImg, PCANet* PcaNet, bool is_e
 			for(int i=0 ;i<size; i++){
 				train_result->Features.push_back(features[i]);
 			}
-
-			/*
-			train_result->Features = features[0];
-			for(int i=1 ;i<size; i++){
-				vconcat(train_result->Features, features[i], train_result->Features);
-			}*/
 		}
 
 		features.clear();
 		vector<cv::Mat>().swap(features);
 	}
-	
-	//if(temp != NULL)
-	//	delete temp;
-	
 	return train_result;
 }
 
@@ -328,8 +307,9 @@ Hashing_Result* HashingHist(PCANet* PcaNet, vector<int>& ImgIdx, vector<cv::Mat>
 
 	vector<int> Ro_BlockSize;
 	double rate = 1 - PcaNet->BlkOverLapRatio;
-	for(int i=0 ;i<PcaNet->HistBlockSize.size(); i++)
+	for(int i=0 ;i<PcaNet->HistBlockSize.size(); i++) {
 		Ro_BlockSize.push_back(round(PcaNet->HistBlockSize[i] * rate));
+	}
 	
 	
 	cv::Mat BHist;
@@ -341,7 +321,6 @@ Hashing_Result* HashingHist(PCANet* PcaNet, vector<int>& ImgIdx, vector<cv::Mat>
 
 	for(int i=0; i<NumImgin0; i++){
 		T = cv::Mat::zeros(row, col, depth);	
-
 
 		for(int j=0; j<NumFilters; j++){
 			temp = Heaviside(Imgs[NumFilters * new_idx[i] + j]);
@@ -384,7 +363,6 @@ cv::Mat Heaviside(cv::Mat& X){
 
 	double *p_X, *p_H;
 
-////# pragma omp parallel for default(none) num_threads(4) private(p_X, p_H) shared(X, H, row, col)
 	for(int i=0; i<row; i++){
 		p_X = X.ptr<double>(i);
 		p_H = H.ptr<double>(i);
@@ -406,7 +384,6 @@ cv::Mat Hist(cv::Mat& mat, int Range){
 
 	double *p_M, *p_H;
 
-////# pragma omp parallel for default(none) num_threads(4) private(p_M, p_H) shared(temp, Hist, row, col)
 	for(int i=0; i<row; i++){
 		p_M = temp.ptr<double>(i);
 		p_H = Hist.ptr<double>(i);
@@ -439,11 +416,9 @@ cv::Mat bsxfun_times(cv::Mat& BHist, int NumFilters){
 	}
 	double p = pow(2.0, NumFilters);
 
-////# pragma omp parallel for default(none) num_threads(4) shared(col, sum, p)
 	for(int i=0; i<col; i++)
 		sum[i] = p / sum[i];
 
-////# pragma omp parallel for default(none) num_threads(4) private(p_BHist) shared(col, row, sum, BHist)
 	for(int i=0; i<row; i++){
 		p_BHist = BHist.ptr<double>(i);
 		for(int j=0; j<col; j++)

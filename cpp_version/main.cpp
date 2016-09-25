@@ -14,23 +14,23 @@ int main(int argc, char** argv){
 	//input image size height: 60, width: 48
 	// 路径根据自己的情况来修改即可
 	const char *dir[DIR_NUM] = {
-		"..\\datas\\train\\1\\1_",
-		"..\\datas\\train\\2\\2_",
-		"..\\datas\\train\\3\\3_",
-		"..\\datas\\train\\4\\4_",
-		"..\\datas\\train\\5\\5_",
-		"..\\datas\\train\\6\\6_",
-		"..\\datas\\train\\7\\7_"
+		"../datas/train/1/1_",
+		"../datas/train/2/2_",
+		"../datas/train/3/3_",
+		"../datas/train/4/4_",
+		"../datas/train/5/5_",
+		"../datas/train/6/6_",
+		"../datas/train/7/7_"
 	};
 
 	const char *test_dir[DIR_NUM] = {
-		"..\\datas\\test\\1\\1_",
-		"..\\datas\\test\\2\\2_",
-		"..\\datas\\test\\3\\3_",
-		"..\\datas\\test\\4\\4_",
-		"..\\datas\\test\\5\\5_",
-		"..\\datas\\test\\6\\6_",
-		"..\\datas\\test\\7\\7_"
+		"../datas/test/1/1_",
+		"../datas/test/2/2_",
+		"../datas/test/3/3_",
+		"../datas/test/4/4_",
+		"../datas/test/5/5_",
+		"../datas/test/6/6_",
+		"../datas/test/7/7_"
 	};
 	
 	char path[DIR_LENGTH];
@@ -85,7 +85,7 @@ int main(int argc, char** argv){
 	cout <<" PCANet Training time: "<<time<<endl;
 
 	
-	FileStorage fs("..\\model\\all_age_filters.xml", FileStorage::WRITE);  
+	FileStorage fs("../model/filters.xml", FileStorage::WRITE);  
 	fs<<"filter1"<<result->Filters[0]<<"filter2"<<result->Filters[1];  
 	fs.release();  
 
@@ -103,27 +103,27 @@ int main(int argc, char** argv){
 
 	result->Features.convertTo(result->Features, CV_32F);
 
-    //设置支持向量机的参数  
-    CvSVMParams params;  
+    	//设置支持向量机的参数  
+    	CvSVMParams params;  
 	params.svm_type    = CvSVM::C_SVC;//SVM类型
 	params.C = 1;
 	//params.nu = 0.8;
 	params.kernel_type = CvSVM::LINEAR;//核函数类型
-    params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);//终止准则函数：当迭代次数达到最大值时终止  
+    	params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);//终止准则函数：当迭代次数达到最大值时终止  
   
-    //训练SVM  
-    //建立一个SVM类的实例  
-    CvSVM SVM;  
+    	//训练SVM  
+    	//建立一个SVM类的实例  
+    	CvSVM SVM;  
 
 	e1 = cv::getTickCount();
-    //训练模型，参数为：输入数据、响应、XX、XX、参数（前面设置过）  
+    	//训练模型，参数为：输入数据、响应、XX、XX、参数（前面设置过）  
 	SVM.train(result->Features, labelsMat, Mat(), Mat(), params);  
 	///  svm  train    /////
 	e2 = cv::getTickCount();
 	time = (e2 - e1)/ cv::getTickFrequency();
 	cout <<" svm training complete, time usage: "<<time<<endl;
 	
-	SVM.save("..\\model\\all_age_svm.xml");
+	SVM.save("../model/svm.xml");
 
 	cout <<"\n ====== PCANet Testing ======= \n"<<endl;
 
@@ -192,9 +192,9 @@ int main(int argc, char** argv){
 	e2 = cv::getTickCount();
 	time = (e2 - e1)/ cv::getTickFrequency();
 	cout <<" test time usage: "<<time<<endl;
-	cout <<"all precise: "<<correct / all<<endl;
+	cout <<"Accuracy: "<<correct / all<<endl;
 	for(int i=0; i<DIR_NUM; i++)
-		cout << "person" <<i+1<<" precise: "<<corrs[i] / testNum<<endl;
+		cout << "person" <<i+1<<" accuracy: "<<corrs[i] / testNum<<endl;
 	cout <<"test images num for each class: "<<testNum<<endl;
 	
 	return 0;
