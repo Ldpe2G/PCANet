@@ -1,5 +1,3 @@
-
-
 import org.opencv.core.Mat
 import org.opencv.core.Core
 import java.util.ArrayList
