@@ -11,5 +11,6 @@ lazy val root = (project in file(".")).
 
 
 libraryDependencies  ++= Seq( 
-  "nu.pattern" % "opencv" % "2.4.9-7"
+  "nu.pattern" % "opencv" % "2.4.9-7",
+  "commons-io" % "commons-io" % "2.5"
 )
