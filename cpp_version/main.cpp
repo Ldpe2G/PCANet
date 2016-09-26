@@ -1,4 +1,4 @@
-#include <opencv2\opencv.hpp>
+#include <opencv2/opencv.hpp>
 #include "utils.h"
 #include <iostream>
 #include <fstream>
@@ -179,7 +179,6 @@ int main(int argc, char** argv){
 		float pred = SVM.predict(hashing_r->Features);
 #pragma omp critical 
 {		
-		//printf("predict: %f, testLabel: %d\n", pred, testLabel[i]);
 		if(pred == testLabel[i]){
 			corrs[testLabel[i]-1]++;
 			correct ++;
