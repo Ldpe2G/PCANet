@@ -5,10 +5,10 @@ PCANet
 
 rewriting the PCANet matlab version into:
 
-1, c++ 
+- c++ 
   - using openmp to reduce the run time
   - using opencv 2.x
-2, scala
+- scala
 
 [PCANet: A Simple Deep Learning Baseline for Image Classification?](http://arxiv.org/pdf/1404.3606v1.pdf)
 
